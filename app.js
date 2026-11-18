@@ -17,7 +17,13 @@ language:'Язык',netsim:'Имитировать отсутствие сети
 products:'Товары',users:'Пользователи',role:'Роль',price:'Цена',qty:'Кол-во',no_orders:'Заказов нет',nothing:'Ничего нет',
 agent_r:'Агент',super_r:'Супервайзер',admin_r:'Администратор',boss_r:'Начальник',all_debt:'Общий долг точек',n_stores:'Точек',n_orders:'Заказов',pend:'Запросов ждут',
 stock_err:'Больше остатка',back:'Назад',choose:'Выберите',lines:'позиций',address:'Адрес',repeat_ok:'Прошлый заказ в корзине',nolast:'Прошлых заказов нет',
-ro_hint:'Заказы делает агент. Здесь — просмотр.',install:'Можно установить на экран телефона (меню браузера → «Добавить на главный экран»).'},
+ro_hint:'Заказы делает агент. Здесь — просмотр.',install:'Можно установить на экран телефона (меню браузера → «Добавить на главный экран»).',
+show:'Новый клиент',show_tab:'Новый',show_t:'Витрина для нового клиента',hero1:'Товары для дома и магазина',hero2:'Оптом, с фото и ценами. Заказ прямо с витрины.',
+in_stock:'товаров в наличии',n_cats:'категорий',hits:'Хиты продаж',news:'Новинки',cats_t:'Категории',all_goods:'Все товары',
+about:'О товаре',code:'Артикул',barcode:'Штрихкод',unit:'Единица',inbox:'В коробке',hit:'Хит',isnew:'Новинка',zoom:'Нажмите на фото, чтобы увеличить',
+checkout:'Оформить заказ',nc_title:'Новый клиент',nc_name:'Название магазина',nc_owner:'Имя владельца',nc_phone:'Телефон',nc_addr:'Адрес',nc_gps:'Отметить место магазина',
+nc_gps_ok:'Место отмечено',nc_need:'Заполните название и телефон',nc_go:'Создать клиента и отправить заказ',nc_ok:'Новый клиент создан, заказ отправлен',
+nc_hint:'Новому клиенту лимит долга — 2 000 000 сум. Больше — по разрешению супервайзера.',items_t:'Товары в заказе',prev:'Назад',nextp:'Дальше',close:'Закрыть',newbadge:'новый'},
 uz:{app:'Vicon Agent',login:'Login',password:'Parol',enter:'Kirish',bad_login:'Login yoki parol noto‘g‘ri',logout:'Chiqish',hint:'Demo: agent1, agent2, agent3, super, admin, boss · parol 1234',
 stores:'Nuqtalar',catalog:'Katalog',orders:'Buyurtmalar',day:'Kun',settings:'Yana',requests:'So‘rovlar',refs:'Ma’lumotnoma',summary:'Hisobot',agents:'Agentlar',
 search:'Tovar qidirish',all:'Hammasi',stock:'Qoldiq',pcs:'dona',sum:'so‘m',cart:'Savat',total:'Jami',send:'Buyurtmani yuborish',empty_cart:'Savat bo‘sh',
@@ -35,7 +41,13 @@ language:'Til',netsim:'Tarmoq yo‘qligini taqlid qilish',reset:'Demo ma’lumot
 products:'Tovarlar',users:'Foydalanuvchilar',role:'Rol',price:'Narx',qty:'Soni',no_orders:'Buyurtmalar yo‘q',nothing:'Hech narsa yo‘q',
 agent_r:'Agent',super_r:'Supervayzer',admin_r:'Administrator',boss_r:'Boshliq',all_debt:'Nuqtalar umumiy qarzi',n_stores:'Nuqtalar',n_orders:'Buyurtmalar',pend:'Kutayotgan so‘rovlar',
 stock_err:'Qoldiqdan ortiq',back:'Orqaga',choose:'Tanlang',lines:'pozitsiya',address:'Manzil',repeat_ok:'Oldingi buyurtma savatda',nolast:'Oldingi buyurtma yo‘q',
-ro_hint:'Buyurtmani agent beradi. Bu yerda — ko‘rish.',install:'Telefon ekraniga o‘rnatish mumkin (brauzer menyusi → «Bosh ekranga qo‘shish»).'}};
+ro_hint:'Buyurtmani agent beradi. Bu yerda — ko‘rish.',install:'Telefon ekraniga o‘rnatish mumkin (brauzer menyusi → «Bosh ekranga qo‘shish»).',
+show:'Yangi mijoz',show_tab:'Yangi',show_t:'Yangi mijoz uchun vitrina',hero1:'Uy va do‘kon uchun tovarlar',hero2:'Ulgurji, rasm va narxlar bilan. Buyurtma to‘g‘ridan-to‘g‘ri vitrinadan.',
+in_stock:'tovar mavjud',n_cats:'kategoriya',hits:'Ko‘p sotiladigan',news:'Yangi tovarlar',cats_t:'Kategoriyalar',all_goods:'Barcha tovarlar',
+about:'Tovar haqida',code:'Artikul',barcode:'Shtrixkod',unit:'O‘lchov',inbox:'Qutida',hit:'Xit',isnew:'Yangi',zoom:'Kattalashtirish uchun rasmni bosing',
+checkout:'Buyurtma berish',nc_title:'Yangi mijoz',nc_name:'Do‘kon nomi',nc_owner:'Egasining ismi',nc_phone:'Telefon',nc_addr:'Manzil',nc_gps:'Do‘kon joyini belgilash',
+nc_gps_ok:'Joy belgilandi',nc_need:'Nomi va telefonni kiriting',nc_go:'Mijozni yaratish va buyurtma yuborish',nc_ok:'Yangi mijoz yaratildi, buyurtma yuborildi',
+nc_hint:'Yangi mijozga qarz limiti — 2 000 000 so‘m. Ko‘prog‘i — supervayzer ruxsati bilan.',items_t:'Buyurtmadagi tovarlar',prev:'Orqaga',nextp:'Keyingi',close:'Yopish',newbadge:'yangi'}};
 let LANG=localStorage.getItem('viconLang')||'ru';
 const t=k=>(I18N[LANG][k]??I18N.ru[k]??k);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -43,12 +55,12 @@ const money=n=>new Intl.NumberFormat('ru-RU').format(Math.round(n))+' '+t('sum')
 const $=s=>document.querySelector(s);
 let ME=null, CART=JSON.parse(localStorage.getItem('viconCart')||'{"store":null,"lines":{}}');
 let CAT={q:'',cat:'',cats:[],list:[]};
-const saveCart=()=>localStorage.setItem('viconCart',JSON.stringify(CART));
+const saveCart=()=>localStorage.setItem(CART.nw?'viconCartNew':'viconCart',JSON.stringify(CART));
 const cartCount=()=>Object.values(CART.lines).reduce((a,b)=>a+b,0);
 let toastT;
 function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2600);}
 
-const TABS={agent:[['stores','🏪','stores'],['catalog','📦','catalog'],['orders','🧾','orders'],['day','📊','day'],['settings','⚙️','settings']],
+const TABS={agent:[['stores','🏪','stores'],['show','✨','show_tab'],['catalog','📦','catalog'],['orders','🧾','orders'],['day','📊','day'],['settings','⚙️','settings']],
  super:[['requests','✋','requests'],['stores','🏪','stores'],['orders','🧾','orders'],['day','📊','agents'],['settings','⚙️','settings']],
  admin:[['orders','🧾','orders'],['refs','📚','refs'],['day','📊','day'],['settings','⚙️','settings']],
  boss:[['summary','📈','summary'],['orders','🧾','orders'],['settings','⚙️','settings']]};
@@ -80,7 +92,7 @@ async login(){
 async stores(){
   const list=await api.listStores();
   shell(t('stores'),list.map(s=>{const over=s.debt>s.limit*0.9;return `<a class="card" style="display:block;text-decoration:none;color:inherit" href="#/store/${s.id}" data-store="${s.id}">
-    <div class="row"><b class="sp">${esc(s.name)}</b><span class="mut">${esc(s.agent)}</span></div><div class="mut">${esc(s.address)}</div>
+    <div class="row"><b class="sp">${esc(s.name)}${s.isNew?` <span class="badge new">${t('newbadge')}</span>`:''}</b><span class="mut">${esc(s.agent)}</span></div><div class="mut">${esc(s.address)}</div>
     <div class="row" style="margin-top:6px"><span>${t('debt')}: <b class="${over?'bad':''}">${money(s.debt)}</b></span><span class="sp"></span><span class="mut">${t('limit')}: ${money(s.limit)}</span></div></a>`;}).join('')||`<p class="mut">${t('nothing')}</p>`,{tab:'stores'});
 },
 async store(id){
@@ -173,7 +185,7 @@ async settings(){
   <p class="mut">${t('install')}</p>
   <button class="sec" data-a="reset" id="reset">${t('reset')}</button><div style="height:8px"></div><button class="red" data-a="logout" id="logout">${t('logout')}</button>`,{tab:'settings'});
 }};
-let RET=null,PAY='cash',VIS=null,REFSUB='products';
+let RET=null,PAY='cash',VIS=null,REFSUB='products',LIST=[];
 const fmtN=n=>new Intl.NumberFormat('ru-RU').format(Math.round(n));
 function dayCards(x){return `<div class="grid2" id="daycards"><div class="card"><div class="mut">${t('visits')}</div><b>${x.visits}</b></div><div class="card"><div class="mut">${t('orders')}</div><b>${x.orders} · ${x.pieces} ${t('pcs')}</b></div>
  <div class="card"><div class="mut">${t('sum')}</div><b>${money(x.sum)}</b></div><div class="card"><div class="mut">${t('ret_sum')}</div><b>${money(x.returns)}</b></div><div class="card"><div class="mut">${t('payments')}</div><b>${money(x.payments)}</b></div></div>`;}
@@ -187,7 +199,8 @@ function stepper(id,q){return `<div class="step"><button data-a="step" data-id="
 function drawChips(){const c=$('#chips');if(!c)return;c.innerHTML=`<button class="chip ${CAT.cat?'':'on'}" data-a="cat" data-c="">${t('all')}</button>`+CAT.cats.map(x=>`<button class="chip ${CAT.cat===x?'on':''}" data-a="cat" data-c="${esc(x)}">${esc(x)}</button>`).join('');}
 async function drawProducts(){
   const list=await api.listProducts({q:CAT.q,cat:CAT.cat}); const el=$('#plist'); if(!el)return;
-  el.innerHTML=list.map(p=>`<div class="card prod" data-p="${p.id}"><img src="${p.img}" loading="lazy" alt=""><div class="sp"><div class="nm">${esc(p.name)}</div>
+  LIST=list.map(p=>p.id);
+  el.innerHTML=list.map(p=>`<div class="card prod" data-p="${p.id}"><img src="${p.img}" loading="lazy" alt="" data-a="pinfo" data-id="${p.id}"><div class="sp"><div class="nm" data-a="pinfo" data-id="${p.id}">${esc(p.name)} <span class="more">ℹ️</span></div>
    <div class="mut">${esc(p.cat)}</div><div><b>${money(p.price)}</b> · <span class="mut">${t('stock')}: <span data-stock="${p.id}">${p.stock-(CART.lines[p.id]||0)}</span></span></div>
    <div style="margin-top:6px">${stepper(p.id,CART.lines[p.id]||0)}</div></div></div>`).join('')||`<p class="mut">${t('nothing')}</p>`;
 }
@@ -269,7 +282,7 @@ async function route(){
   let h=location.hash.replace(/^#\//,'');const [name,arg]=h.split('/');
   if(!ME){if(name!=='login'){location.hash='#/login';return;}return R.login();}
   if(!name||name==='login'){location.hash='#/'+TABS[ME.role][0][0];return;}
-  if(!TABS[ME.role].some(x=>x[0]===name)&&!['store','cart','return','pay','visit','catalog'].includes(name)){location.hash='#/'+TABS[ME.role][0][0];return;}
+  if(!TABS[ME.role].some(x=>x[0]===name)&&!['store','cart','return','pay','visit','catalog','newclient'].includes(name)){location.hash='#/'+TABS[ME.role][0][0];return;}
   try{await (R[name]||R.stores)(arg);}catch(e){
     if(e.code==='AUTH'){location.hash='#/login';return;}
     shell(t('app'),`<div class="alert" id="screenerr">${esc(e.message)}</div>`,{back:'#/'+TABS[ME.role][0][0]});}

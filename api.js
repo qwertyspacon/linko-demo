@@ -1,7 +1,7 @@
 /* Слой «сервера» демо. Все методы асинхронные и возвращают данные/бросают Error с полем code.
    Позже заменяется настоящим бэкендом с теми же именами: login, listProducts, createOrder, ... */
 (function(){
-const KEY='viconDemoState', SES='viconDemoSession', NET='viconDemoNetSim';
+const DATA_VER=2, KEY='viconDemoState', SES='viconDemoSession', NET='viconDemoNetSim';
 let S=null;
 const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
 const err=(code,msg,extra)=>Object.assign(new Error(msg||code),{code},extra||{});
@@ -13,9 +13,13 @@ const localDay=(iso)=>{const d=new Date(iso);return d.getFullYear()+'-'+String(d
 async function load(){
   if(S) return S;
   const raw=localStorage.getItem(KEY);
-  if(raw){ S=JSON.parse(raw); return S; }
+  if(raw){ S=JSON.parse(raw);
+    if(S.ver!==DATA_VER){            // новые поля товаров (фото, описание) без потери остатков и заказов
+      const fresh=await fetch('data/products.json').then(r=>r.json()); const st=Object.fromEntries(S.products.map(p=>[p.id,p.stock]));
+      S.products=fresh.map(p=>({...p,stock:st[p.id]??p.stock})); S.ver=DATA_VER; save(); }
+    return S; }
   const [products,stores,users,orders]=await Promise.all(['products','stores','users','orders'].map(n=>fetch('data/'+n+'.json').then(r=>r.json())));
-  S={products,stores,users,orders,payments:[],returns:[],visits:[],requests:[],seq:2000};
+  S={ver:DATA_VER,products,stores,users,orders,payments:[],returns:[],visits:[],requests:[],seq:2000};
   save(); return S;
 }
 function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
@@ -48,6 +52,11 @@ const api={
   async listCategories(){ await need(); return [...new Set(S.products.map(p=>p.cat))].sort(); },
   async listStores(){ const u=await need(); return S.stores.filter(s=>canStore(u,s)).map(s=>({...s})); },
   async getStore(id){ const u=await need(); return {...storeOf(u,id)}; },
+  async createStore({name,owner,phone,address,lat,lon}){ const u=await need(); if(u.role!=='agent') throw err('FORBIDDEN','Клиента добавляет агент');
+    name=String(name||'').trim(); phone=String(phone||'').trim(); if(!name||!phone) throw err('EMPTY','Заполните название и телефон');
+    const s={id:Math.max(0,...S.stores.map(x=>x.id))+1,name,owner:String(owner||'').trim(),phone,address:String(address||'').trim(),
+      lat:lat??null,lon:lon??null,agent:u.login,debt:0,limit:2000000,isNew:true,created:nowIso()};
+    S.stores.push(s); save(); return {...s}; },
   async listUsers(){ const u=await need(); if(u.role!=='admin'&&u.role!=='boss') throw err('FORBIDDEN'); return S.users.map(pub); },
   async listOrders(){ const u=await need(); const ag=myAgents(u);
     return S.orders.filter(o=>ag.includes(o.agent)).sort((a,b)=>b.created.localeCompare(a.created)).map(o=>({...o})); },

@@ -1,5 +1,5 @@
-const V='vicon-demo-v1';
-const CORE=['./','index.html','app.js','api.js','style.css','manifest.json','icon.svg','data/products.json','data/stores.json','data/users.json','data/orders.json'];
+const V='vicon-demo-v2';
+const CORE=['./','index.html','app.js','api.js','show.js','style.css','manifest.json','icon.svg','data/products.json','data/stores.json','data/users.json','data/orders.json'];
 self.addEventListener('install',e=>{e.waitUntil((async()=>{
   const c=await caches.open(V); await c.addAll(CORE);
   try{const p=await (await fetch('data/products.json')).json();
