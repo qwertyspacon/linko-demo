@@ -85,7 +85,7 @@ async login(){
   <label for="lg">${t('login')}</label><input id="lg" autocapitalize="none" autocomplete="username">
   <label for="pw">${t('password')}</label><input id="pw" type="password" autocomplete="current-password">
   <div id="err" class="alert" hidden></div><div style="height:14px"></div>
-  <button data-a="login" id="enter">${t('enter')}</button>
+  <button data-a="login" id="enter">${t('enter')}</button><div class="mut" id="ver" style="text-align:center;margin-top:10px">версия 3 · карточка товара · новый клиент</div>
   <p class="mut" style="text-align:center">${t('hint')}</p>
   <div class="grid2"><button class="sec sm" data-a="lang" data-l="ru">Русский</button><button class="sec sm" data-a="lang" data-l="uz">O‘zbekcha</button></div></div>`;
 },
@@ -289,6 +289,6 @@ async function route(){
   window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',route);
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){const hadSW=!!navigator.serviceWorker.controller;navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadSW&&!rl){rl=true;location.reload();}});}
 document.documentElement.lang=LANG==='uz'?'uz':'ru';
 route().then(()=>api.syncQueue());
