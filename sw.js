@@ -1,4 +1,4 @@
-const V='vicon-demo-v3';
+const V='vicon-demo-v4';
 const CORE=['./','index.html','app.js','api.js','show.js','style.css','manifest.json','icon.svg','data/products.json','data/stores.json','data/users.json','data/orders.json'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
@@ -10,10 +10,8 @@ self.addEventListener('install',e=>{
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{
   for(const k of await caches.keys()) if(k!==V) await caches.delete(k);
   await self.clients.claim();
-  // фото — в фоне, не задерживая обновление
-  try{const c=await caches.open(V);const p=await (await fetch('data/products.json',{cache:'no-store'})).json();
-    for(const x of p){ if(!(await c.match(x.img))) { try{await c.add(x.img);}catch(_){} } }}catch(_){}
 })());});
+// фото кэшируются сами при просмотре; заранее не качаем, чтобы не держать открытие
 self.addEventListener('fetch',e=>{
   const u=new URL(e.request.url);
   if(e.request.method!=='GET'||u.origin!==location.origin) return;
@@ -25,6 +23,9 @@ self.addEventListener('fetch',e=>{
       try{const r=await fetch(e.request); if(r.ok) c.put(e.request,r.clone()); return r;}catch(_){return Response.error();}
     }
     // код и данные: сначала свежие из сети, без сети — из памяти
-    try{const r=await fetch(e.request,{cache:'no-store'}); if(r.ok) c.put(e.request,r.clone()); return r;}
-    catch(_){ return (await c.match(e.request,{ignoreSearch:true}))||(await c.match('index.html'))||Response.error(); }
+    const cached=await c.match(e.request,{ignoreSearch:true});
+    const net=fetch(e.request,{cache:'no-store'}).then(r=>{if(r.ok) c.put(e.request,r.clone()); return r;});
+    if(!cached){ try{return await net;}catch(_){return (await c.match('index.html'))||Response.error();} }
+    // есть копия: ждём сеть не дольше 4 секунд, иначе отдаём копию
+    try{ return await Promise.race([net,new Promise((_,rej)=>setTimeout(rej,4000))]); }catch(_){ return cached; }
   })());});

@@ -85,7 +85,7 @@ async login(){
   <label for="lg">${t('login')}</label><input id="lg" autocapitalize="none" autocomplete="username">
   <label for="pw">${t('password')}</label><input id="pw" type="password" autocomplete="current-password">
   <div id="err" class="alert" hidden></div><div style="height:14px"></div>
-  <button data-a="login" id="enter">${t('enter')}</button><div class="mut" id="ver" style="text-align:center;margin-top:10px">версия 3 · карточка товара · новый клиент</div>
+  <button data-a="login" id="enter">${t('enter')}</button><div class="mut" id="ver" style="text-align:center;margin-top:10px">версия 4 · карточка товара · новый клиент</div>
   <p class="mut" style="text-align:center">${t('hint')}</p>
   <div class="grid2"><button class="sec sm" data-a="lang" data-l="ru">Русский</button><button class="sec sm" data-a="lang" data-l="uz">O‘zbekcha</button></div></div>`;
 },
